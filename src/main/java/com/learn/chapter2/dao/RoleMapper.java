@@ -2,6 +2,9 @@ package com.learn.chapter2.dao;
 
 import com.learn.chapter2.po.Role;
 
+import java.util.List;
+import java.util.Set;
+
 //todo 注意各个方法的返回值，很有意思。
 public interface RoleMapper {
 
@@ -14,4 +17,6 @@ public interface RoleMapper {
 
     //插入一个角色。
      int insertRole(Role role);
+
+     Set<Role> getRolesByRoleNameLike(String likeKey);
 }
