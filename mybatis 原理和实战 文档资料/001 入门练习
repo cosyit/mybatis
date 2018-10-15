@@ -1,0 +1,68 @@
+先搭建mybatis的开发环境：
+
+
+
+一. 认识mybatis的核心组件
+
+   1.SqlSessionFactoryBuilder : SqlSession工厂的构造器Builder
+   它会根据配置信息 或者 代码 来生成SqlSessionFactory 的工厂接口。
+   2. SqlSessionFactory : SqlSession 依靠这个工厂来生成的。
+   它是一个工厂的接口，而不是实现类。它的任务就创捷sqlSession[类似于conn连接对象]。
+   我们推荐xml方式来配置这个工厂，以避免硬编码，方便修改。
+   关于SqlSessionFactory 的配置，我们是以一个 [组织.项目名.session.Configuration] 的类
+   的对象的形式来存在的，这个对象将存在于mybatis的整个app 的生命周期中，这样方便我们重复的读取
+   和使用它。因为常用的数据放在在内存中的数据也是最快的，这种不怎么变得数据用单例模式，基本也不怎么
+   占用空间。
+   sqlSessionFactory接口，有2个实现：1.DefaultSessionFactory 2.SqlSessionManager [尚未使用]
+
+   3.SqlSession : 它发送sql去执行然后返回结果。 也可以通过它来获取Mapper 接口。
+   4.SqlMapper : 它是一个由java接口和xml-注解 构成，需要给出对应的sql和映射规则 的一种组件。
+   它可以负责发送sql去执行，然后返回结果。
+
+
+大概流程就是  SqlSessionFactoryBuilder 加载 Configuration对象[常用从xml中生成]
+
+来生成SqlSessionFactory接口得实例 --- 因为SqlSessionManager 尚未使用，目前基本使用得是
+DefaultSqlSessionFactory 对象。
+
+讲了这么多，我们首先要先来 生成一个mybatis-config.xml文件吧。
+配置文件从官网上找一个即可：
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="org/mybatis/example/BlogMapper.xml"/>
+    </mappers>
+</configuration>
+
+
+此文件的其他部分，其实都很好理解：
+今天我要补充的内容是： dataSource 标签中的 mybatis的内置类型：type="POOLED"属性
+todo mybatis 由多种内置类型 ：如 UNPOOLED ,POOLED,JNDI
+1.unpooled ：每次都创建一个新的连接，并关闭它。使用小规模数量，并发用户简单的app应用。
+2.pooled ： mybatis 创建一个数据库连接池，连接池中的连接用于数据库操作，
+数据操作完成之后，mybatis 会将此连接返回给连接池。比较常用。
+3.JNDI,mybaitis 从应用服务器向配置好的JNDI数据源dataSource获取数据库连接。
+在生产环境中，优先考虑这种方式。
+
+dataSource的创建，要从SqlSessionFactoryBuild开始追溯。
+
+
+todo 今天遇到的坑：1.因为maven项目的原因，不加载mapper.xml ,需要在maven 的pom中配置，maven的坑。
+                2. mapper.xml 的注释 还是 老样子 <!----> 而非idea 提示的 -- ，这是idea 的坑。导致我的sql 读取报错了。
+
+
