@@ -4,6 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
+<!-- todo 开发技巧，把namespace中的接口一一注释，掉放入mapper中。-->
+
 <mapper namespace="com.learn.chapter2.dao.RoleMapper">
 
     <!-- todo 出了查询有返回值，修改的操作 都没有resultType ,另外这里的sql不需要分号，因为这里不是mysql cmd 环境。
@@ -20,6 +22,23 @@
       select id,role_name as roleName,note from t_role where role_name like #{likeKey};
     </select>
 
+    <!-- 如何返回map,有时我们没有类和我们处理的表对应，那么我们就返回一个map的时候。如何返回map?如下： -->
+    <!--     Map<String,Role>  getRoleByIdReturnMap(Long id);-->
+    <select id="getRoleByIdReturnMap" resultType="map">
+        select id,role_name as roleName,note from t_role where id = #{id}
+    </select>
+
+
+    <!--Map<Long,Role> getRolesByLikeReturnMap(String likeString);-->
+    <select id="getRolesByLikeReturnMap" resultType="map">
+        select id,role_name as roleName,note from t_role where role_name like  #{likeString};
+    </select>
+
+
+    <select id="getRolesByLikeReturnMap2" resultType="map">
+        select id,role_name as roleName,note from t_role where role_name like  #{likeString};
+    </select>
+
 
     <delete id="deleteRole" parameterType="long">
         delete from t_role where id = #{id}
@@ -29,4 +48,5 @@
         <!-- 注入的参数是用java编程，来取java域的变量值，而且你看，java 方法传入的是role,这里还自动拆包了，都可以直接传属性了。-->
         insert into t_role (role_name, note) values (#{roleName},#{note})
     </insert>
+
 </mapper>

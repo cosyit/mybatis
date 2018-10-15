@@ -6,6 +6,7 @@ import com.learn.chapter2.util.SqlSessionFactoryUtil;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TestMain01 {
@@ -34,6 +35,7 @@ public class TestMain01 {
 //        sqlSession.commit();
 
 
+/*
         Set<Role> list = roleMapper.getRolesByRoleNameLike("%role%");
 
         System.out.println(list);
@@ -41,6 +43,19 @@ public class TestMain01 {
         for(Role role:list){
             System.out.println(role);
         }
+*/
+
+/*    Map<String,Role> map = roleMapper.getRoleByIdReturnMap(5L);
+
+        System.out.println(map);*/
+
+/*        Map<Long,Role> map = roleMapper.getRolesByLikeReturnMap("%e%");
+
+        System.out.println(map);*/
+
+        Map<String,Role> map = roleMapper.getRolesByLikeReturnMap2("%e%");
+
+        System.out.println(map.size());
 
     }
 }
